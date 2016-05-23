@@ -1,9 +1,8 @@
 package springbook.user;
 
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
 
-import springbook.user.dao.DaoFactory;
 import springbook.user.dao.UserDao;
 import springbook.user.domain.User;
 
@@ -18,9 +17,12 @@ public class UserDaoTest {
 //		UserDao dao = new DaoFactory().userDao();
 		
 		// 3. 
-		ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
-		UserDao dao = context.getBean("userDao", UserDao.class);
+//		ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+//		UserDao dao = context.getBean("userDao", UserDao.class);
 		
+		// 4.
+		ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
+		UserDao dao = context.getBean("userDao", UserDao.class);
 		dao.deleteAll();
 		
 		User user = new User();

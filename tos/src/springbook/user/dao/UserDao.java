@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import javax.sql.DataSource;
+
 import springbook.user.domain.User;
 
 public class UserDao {
@@ -19,10 +21,23 @@ public class UserDao {
 	public UserDao(ConnectionMaker connectionMaker) {
 		this.connectionMaker = connectionMaker;
 	}
+	
+	public void setConnectionMaker(ConnectionMaker connectionMaker) {
+		this.connectionMaker = connectionMaker;
+	}
+	
+	// 4.
+	private DataSource dataSource;
+
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
 
 	public void add(User user) throws Exception {
 //		Connection c = simpleConnectionMaker.makeNewConnection();
-		Connection c = connectionMaker.makeConnection();
+//		Connection c = connectionMaker.makeConnection();
+		// 4.
+		Connection c = dataSource.getConnection();
 
 		PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values(?, ?, ?)");
 		ps.setString(1, user.getId());
@@ -38,8 +53,11 @@ public class UserDao {
 
 	public User get(String id) throws Exception {
 //		Connection c = simpleConnectionMaker.makeNewConnection();
-		Connection c = connectionMaker.makeConnection();
+//		Connection c = connectionMaker.makeConnection();
 
+		// 4.
+		Connection c = dataSource.getConnection();
+		
 		PreparedStatement ps = c.prepareStatement("select * from users where id = ?");
 		ps.setString(1, id);
 
