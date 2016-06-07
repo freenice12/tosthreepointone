@@ -35,7 +35,7 @@ public class UserDao {
 		this.dataSource = dataSource;
 	}
 
-	public void add(User user) throws Exception {
+	public void add(final User user) throws Exception {
 //		Connection c = simpleConnectionMaker.makeNewConnection();
 //		Connection c = connectionMaker.makeConnection();
 		// 4.
@@ -52,8 +52,37 @@ public class UserDao {
 //		c.close();
 		
 		// 5. strategy pattern
-		StatementStrategy stmt = new AddStatement(user);
-		jdbcContextWithStatementStrategy(stmt);
+//		StatementStrategy stmt = new AddStatement(user);
+//		jdbcContextWithStatementStrategy(stmt);
+		
+		// 6. internal class
+//		class AddStatement implements StatementStrategy {
+//			
+//			@Override
+//			public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+//				PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values(?, ?, ?)");
+//				ps.setString(1,  user.getId());
+//				ps.setString(2,  user.getName());
+//				ps.setString(3,  user.getPassword());
+//				return ps;
+//			}
+//
+//		}
+//		StatementStrategy stmt = new AddStatement();
+//		jdbcContextWithStatementStrategy(stmt);
+		
+		// 7. anonymous class
+		jdbcContextWithStatementStrategy(new StatementStrategy() {
+			
+			@Override
+			public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+				PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values(?, ?, ?)");
+				ps.setString(1,  user.getId());
+				ps.setString(2,  user.getName());
+				ps.setString(3,  user.getPassword());
+				return ps;
+			}
+		});
 		
 	}
 
@@ -94,8 +123,17 @@ public class UserDao {
 //		ps.executeUpdate();
 //		ps.close();
 //		c.close();
-		StatementStrategy stmt = new DeleteAllStatement();
-		jdbcContextWithStatementStrategy(stmt);
+//		StatementStrategy stmt = new DeleteAllStatement();
+//		jdbcContextWithStatementStrategy(stmt);
+		
+		// 7. anonymous class
+		jdbcContextWithStatementStrategy(new StatementStrategy() {
+			
+			@Override
+			public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+				return c.prepareStatement("delete from users");
+			}
+		});
 	}
 	
 	public int getCount() throws SQLException {
