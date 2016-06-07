@@ -3,6 +3,8 @@ package springbook.user.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.EmptyStackException;
 
 import javax.sql.DataSource;
 
@@ -11,20 +13,20 @@ import springbook.user.domain.User;
 public class UserDao {
 	
 //	private SimpleConnectionMaker simpleConnectionMaker;
-	private ConnectionMaker connectionMaker;
+//	private ConnectionMaker connectionMaker;
 	
 	public UserDao() {
 //		simpleConnectionMaker = new SimpleConnectionMaker();
-		connectionMaker = new DConnectionMaker();
+//		connectionMaker = new DConnectionMaker();
 	}
 	
-	public UserDao(ConnectionMaker connectionMaker) {
-		this.connectionMaker = connectionMaker;
-	}
-	
-	public void setConnectionMaker(ConnectionMaker connectionMaker) {
-		this.connectionMaker = connectionMaker;
-	}
+//	public UserDao(ConnectionMaker connectionMaker) {
+//		this.connectionMaker = connectionMaker;
+//	}
+//	
+//	public void setConnectionMaker(ConnectionMaker connectionMaker) {
+//		this.connectionMaker = connectionMaker;
+//	}
 	
 	// 4.
 	private DataSource dataSource;
@@ -62,11 +64,16 @@ public class UserDao {
 		ps.setString(1, id);
 
 		ResultSet rs = ps.executeQuery();
-		rs.next();
-		User user = new User();
-		user.setId(rs.getString("id"));
-		user.setName(rs.getString("name"));
-		user.setPassword(rs.getString("password"));
+		User user = null;
+		if (rs.next()) {
+			user = new User();
+			user.setId(rs.getString("id"));
+			user.setName(rs.getString("name"));
+			user.setPassword(rs.getString("password"));
+		} 
+		if (user == null) {
+			throw new EmptyStackException();
+		}
 
 		rs.close();
 		ps.close();
@@ -76,12 +83,28 @@ public class UserDao {
 	}
 	
 	public void deleteAll() throws Exception {
-		Connection c = connectionMaker.makeConnection();
+		Connection c = dataSource.getConnection();
 
 		PreparedStatement ps = c.prepareStatement("delete from users");
 		ps.executeUpdate();
 		ps.close();
 		c.close();
+	}
+	
+	public int getCount() throws SQLException {
+		Connection c = dataSource.getConnection();
+		
+		PreparedStatement ps = c.prepareStatement("select count(*) from users");
+		
+		ResultSet rs = ps.executeQuery();
+		rs.next();
+		int count = rs.getInt(1);
+		
+		rs.close();
+		ps.close();
+		c.close();
+		
+		return count;
 	}
 	
 }
