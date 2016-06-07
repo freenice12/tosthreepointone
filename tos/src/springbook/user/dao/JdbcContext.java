@@ -32,4 +32,28 @@ public class JdbcContext {
 		}
 	}
 
+	public void executeSql(final String sql) throws SQLException {
+		workWithStatementStrategy(new StatementStrategy() {
+			
+			@Override
+			public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+				return c.prepareStatement(sql);
+			}
+		});
+	}
+
+	public void executeSql(String string, String... args) throws SQLException {
+		workWithStatementStrategy(new StatementStrategy() {
+			
+			@Override
+			public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+				PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values(?, ?, ?)");
+				for (int i = 1; i <= args.length; i++) {
+					ps.setString(i, args[i-1]);
+				}
+				return ps;
+			}
+		});
+	}
+
 }

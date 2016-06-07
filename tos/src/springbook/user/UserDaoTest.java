@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -111,7 +112,7 @@ public class UserDaoTest {
 		
 	}
 	
-	@Test(expected=EmptyStackException.class)
+	@Test(expected=EmptyResultDataAccessException.class)
 	public void getUserFailure() throws Exception {
 //		ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
 //		UserDao dao = context.getBean("userDao", UserDao.class);
