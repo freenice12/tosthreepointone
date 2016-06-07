@@ -39,17 +39,22 @@ public class UserDao {
 //		Connection c = simpleConnectionMaker.makeNewConnection();
 //		Connection c = connectionMaker.makeConnection();
 		// 4.
-		Connection c = dataSource.getConnection();
-
-		PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values(?, ?, ?)");
-		ps.setString(1, user.getId());
-		ps.setString(2, user.getName());
-		ps.setString(3, user.getPassword());
-
-		ps.executeUpdate();
-
-		ps.close();
-		c.close();
+//		Connection c = dataSource.getConnection();
+//
+//		PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values(?, ?, ?)");
+//		ps.setString(1, user.getId());
+//		ps.setString(2, user.getName());
+//		ps.setString(3, user.getPassword());
+//
+//		ps.executeUpdate();
+//
+//		ps.close();
+//		c.close();
+		
+		// 5. strategy pattern
+		StatementStrategy stmt = new AddStatement(user);
+		jdbcContextWithStatementStrategy(stmt);
+		
 	}
 
 
