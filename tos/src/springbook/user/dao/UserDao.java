@@ -15,6 +15,12 @@ public class UserDao {
 //	private SimpleConnectionMaker simpleConnectionMaker;
 //	private ConnectionMaker connectionMaker;
 	
+	private JdbcContext jdbcContext;
+	
+	public void setJdbcContext(JdbcContext jdbcContext) {
+		this.jdbcContext = jdbcContext;
+	}
+
 	public UserDao() {
 //		simpleConnectionMaker = new SimpleConnectionMaker();
 //		connectionMaker = new DConnectionMaker();
@@ -72,7 +78,7 @@ public class UserDao {
 //		jdbcContextWithStatementStrategy(stmt);
 		
 		// 7. anonymous class
-		jdbcContextWithStatementStrategy(new StatementStrategy() {
+		jdbcContext.workWithStatementStrategy(new StatementStrategy() {
 			
 			@Override
 			public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
@@ -127,7 +133,7 @@ public class UserDao {
 //		jdbcContextWithStatementStrategy(stmt);
 		
 		// 7. anonymous class
-		jdbcContextWithStatementStrategy(new StatementStrategy() {
+		jdbcContext.workWithStatementStrategy(new StatementStrategy() {
 			
 			@Override
 			public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
@@ -152,22 +158,22 @@ public class UserDao {
 		return count;
 	}
 	
-	public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException {
-		Connection c = null;
-		PreparedStatement ps = null;
-		
-		try {
-			c = dataSource.getConnection();
-			
-			ps = stmt.makePreparedStatement(c);
-			
-			ps.executeUpdate();
-		} catch (SQLException e) {
-			throw e;
-		} finally {
-			if (ps != null) { try { ps.close(); } catch (SQLException e) {} }
-			if (c != null) { try { c.close(); } catch (SQLException e) {} }
-		}
-	}
+//	public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException {
+//		Connection c = null;
+//		PreparedStatement ps = null;
+//		
+//		try {
+//			c = dataSource.getConnection();
+//			
+//			ps = stmt.makePreparedStatement(c);
+//			
+//			ps.executeUpdate();
+//		} catch (SQLException e) {
+//			throw e;
+//		} finally {
+//			if (ps != null) { try { ps.close(); } catch (SQLException e) {} }
+//			if (c != null) { try { c.close(); } catch (SQLException e) {} }
+//		}
+//	}
 	
 }
